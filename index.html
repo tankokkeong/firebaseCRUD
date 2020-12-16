@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyD1_ZL5wme1XA10ZrhPc_HnE-3iNOvqmzk",
+        authDomain: "fir-python-ed2a4.firebaseapp.com",
+        projectId: "fir-python-ed2a4",
+        storageBucket: "fir-python-ed2a4.appspot.com",
+        messagingSenderId: "686883931950",
+        appId: "1:686883931950:web:f9cdb21ae08586ec9e1cbf"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-database.js"></script> 
+    <style>
+        td{
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <td><label for="">Student ID: </label></td>
+            <td><input type="text" id="student-id"></td>
+        </tr>
+
+        <tr>
+            <td><label for="">Student Name: </label></td>
+            <td><input type="text" id="student-name"></td>
+        </tr>
+    
+        <tr>
+            <td><label for="">Student Program: </label></td>
+            <td><input type="text" id="student-program"></td>
+        </tr>
+    
+        <tr>
+            <td><label for="">Student Status: </label></td>
+            <td><input type="text" id="student-status"></td>
+        </tr>
+    </table>
+    
+    <button onclick="insert();">Create</button>
+    <button onclick="read();">Read</button>
+    <button onclick="update();">Update</button>
+    <button onclick="remove();">Delete</button>
+    <button onclick="clearValue();">Clear</button>
+
+    <script>
+        // Global values
+        function getValue()
+        {
+            student_id = document.getElementById("student-id").value;
+            student_name = document.getElementById("student-name").value;
+            student_program = document.getElementById("student-program").value;
+            student_status = document.getElementById("student-status").value;
+        }
+
+        function insertForm(id, name, program, status)
+        {
+            document.getElementById("student-id").value = id;
+            document.getElementById("student-name").value = name;
+            document.getElementById("student-program").value = program;
+            document.getElementById("student-status").value = status;
+        }
+
+        function clearValue()
+        {
+            insertForm("", "", "", "");
+        }
+        
+        function insert(){
+            // Get Value from the form
+            getValue();
+
+            firebase.database().ref("student/" + student_id).set({
+                StudentName : student_name,
+                StudentProgram : student_program,
+                StudentStatus : student_status
+            });
+        }
+
+        function read()
+        {
+            // Get values from the form
+            getValue();
+
+            firebase.database().ref("student/" + student_id).on('value', function(snapshot){
+                insertForm(
+                    student_id,
+                    snapshot.val().StudentName,
+                    snapshot.val().StudentProgram,
+                    snapshot.val().StudentStatus
+                ) ;
+            });
+        }
+
+        function update()
+        {
+            // Get values from the form
+            getValue();
+
+            firebase.database().ref("student/" + student_id).update({
+                StudentName : student_name,
+                StudentProgram : student_program,
+                StudentStatus : student_status
+            });
+        }
+
+        function remove()
+        {
+            // Get values from the form
+            getValue();
+
+            firebase.database().ref("student/" + student_id).remove();
+        }
+    </script>
+</body>
+</html>

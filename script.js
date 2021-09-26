@@ -160,18 +160,18 @@ function renderFile(event){
 
 function uploadFile(){
     var uploaded_img = document.getElementById("upload-file").files[0].name;
+    var file_name = new Date().getTime() + "." + uploaded_img.split(".").pop();
 
-    var uploadTask = storage.ref("Images/" + uploaded_img);
+    var uploadTask = storage.ref("Images/" + file_name);
     var ImageRef = database.ref("imageStorage/");
 
     uploadTask.put(file_property[0]).then((snapshot) => {
-        console.log(file_property)
         console.log('Uploaded a blob or file!');
 
         uploadTask.getDownloadURL()
         .then((url) => {
             ImageRef.push({
-                imageName : uploaded_img,
+                imageName : file_name,
                 imageURL: url
             });
         })
@@ -182,13 +182,43 @@ function uploadFile(){
     });
 }
 
+function deleteFile(fileName, id){
+    var deleteTask = storage.ref("Images/" + fileName);
+    var ImageRef = database.ref("imageStorage/" + id);
+
+    var confirmDelete = confirm("Are you sure you want to delete this file?");
+
+    if(confirmDelete){
+        // Delete the file
+        deleteTask.delete().then(() => {
+            // File deleted successfully
+            console.log("File deleted successful!")
+        }).catch((error) => {
+            // Uh-oh, an error occurred!
+            console.log(error)
+        });
+
+        //Delete record from database
+        ImageRef.remove();
+    }
+}
+
 function displayCurrentImageStorage(){
     var image_container = document.getElementById("current-img-storage");
     var ImageRef = database.ref("imageStorage");
 
-    ImageRef.on('child_added', (snapshot) => {
-        image_container.innerHTML = image_container.innerHTML +
-        "<img src='" + snapshot.val().imageURL + "' class='storage-image' />";         
+    ImageRef.on('value', (snapshot) => {
+        //Clear previous value
+        image_container.innerHTML = "";
+
+        snapshot.forEach(function(childSnapshot){
+            image_container.innerHTML = image_container.innerHTML +
+            "<div class='img-container text-center ml-2'>" +
+            "<img src='" + childSnapshot.val().imageURL + "' class='storage-image' /> <br />" +
+            "<button class='btn btn-danger mt-3' onclick='deleteFile(" + '"' + childSnapshot.val().imageName + '", ' + '"' + childSnapshot.key + '"' + ")'>Delete</button>" +
+            "</div>";         
+        });
+        
     });
 
 }

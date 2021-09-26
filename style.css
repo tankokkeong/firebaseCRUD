@@ -1,0 +1,20 @@
+.tab-pane{
+    padding: 10px;
+}
+
+td{
+    padding: 10px 0;
+}
+
+#to-do-list li{
+    margin: 10px 0;
+}
+
+.storage-image{
+    width: 100px;
+    height: 100px;
+    margin-left: 10px;
+    margin-top: 5px;
+    border: 1px solid black;
+    padding: 10px;
+}
